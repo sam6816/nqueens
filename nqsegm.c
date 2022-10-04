@@ -1,6 +1,7 @@
 /* Segmented BFS N-Queens with openmp */
 // N14 in 45 ms, N16 in 1.2, N17 in 8.6 seconds 
 // N14 single thread: 0.150 s 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <omp.h>
