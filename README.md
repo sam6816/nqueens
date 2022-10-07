@@ -1,10 +1,12 @@
-A collection of N-Queens counting programs in C
+### A collection of N-Queens counting programs in C
 
 After I had experimented with backtracking I wrote a first N-Queens program. That basic 
 version is "backtrack_goto.c". It uses -1 to indicate a fresh empty row.
 
 "threats_cumul.c" is more than twice as fast; it uses a 2D array to keep the current 
 threats up to date. As a side effect, these overlapping threats can be printed:
+
+```
 
       #        
     #...       
@@ -22,6 +24,8 @@ threats up to date. As a side effect, these overlapping threats can be printed:
  .oo..OO. . o.o
 
 120009       
+
+```
 
 Starting at the top, the hashes are the queens, sending dots as threats. Small and big Os 
 indicate overlapping threats. The line shows on which row a queen is sought. This is with
