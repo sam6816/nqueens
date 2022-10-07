@@ -5,8 +5,8 @@
 #include <unistd.h>
 
 //const int N = 8;  //92 solutions
-const int N = 12;   //12: 14200 in 0.050 s
-#define SHOWLIM  12000
+const int N = 14;   //12: 14200 in 0.050 s
+#define SHOWLIM  120000
 
 /* Print excluding last row, plus last col */
 //pr_solution(bq, col); 
@@ -90,14 +90,14 @@ int main() {
 		if (row == N - 1) { 
 			if (col >= 0) {
 				cnt++;
-                //if (cnt > SHOWLIM)
-				    //show_board(queen, threats, row, cnt);
+                if (cnt > SHOWLIM)
+				    show_board(queen, threats, row, cnt);
 			}
 			row--;
 
 		} else {
-            //if (cnt > SHOWLIM)
-    			//show_board(queen, threats, row, cnt);
+            if (cnt > SHOWLIM)
+    			show_board(queen, threats, row, cnt);
 			if (queen[row] >= 0)
 				change_thr(-1, row, queen[row], threats);	
 			if ((queen[row] = col) >= 0) 
