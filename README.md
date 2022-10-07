@@ -1,9 +1,9 @@
 ### A collection of N-Queens counting programs in C
 
 After I had experimented with backtracking I wrote a first N-Queens program. That basic 
-version is "backtrack_goto.c". It uses -1 to indicate a fresh empty row.
+version is `backtrack_goto.c`. It uses -1 to indicate a fresh empty row.
 
-"threats_cumul.c" is more than twice as fast; it uses a 2D array to keep the current 
+`threats_cumul.c` is more than twice as fast; it uses a 2D array to keep the current 
 threats up to date. As a side effect, these overlapping threats can be printed:
 
 ```
@@ -33,7 +33,7 @@ N = 14 and 120000 skipped solutions, otherwise the top queens are all on the lef
 It looks quite interesting when running - the timing has to be fine-tuned, because the last 
 rows change very fast, while the first (top) rows hardly move,
 
-In search of more speed I tried a bit based version: "bittable.c". It uses a lookup, and is not 
+In search of more speed I tried a bit based version: `bittable.c`. It uses a lookup, and is not 
 faster than the cumulated threats above.
 
 
