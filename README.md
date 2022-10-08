@@ -37,7 +37,6 @@ In search of more speed I tried a bit based version: `bittable.c`. It uses a loo
 faster than the cumulated threats above.
 
 
-----------
 
 I finally found a very nice "simple" version (as he calls it) be Kenji Kise. The trick is to 
 split the current threats into three groups: straight, left and right diagonal. The diagonals are propagated
@@ -52,7 +51,7 @@ My version of it is `recbits_puzzle.c`.
 
 Here are the timings for N14. Besides `-O3`, `-march=skylake` is also important. 
    
-|      | ms
+||ms
 |------|-------------
 |backtrack | 310
 |kise      | 280 / 260  
@@ -61,7 +60,7 @@ Here are the timings for N14. Besides `-O3`, `-march=skylake` is also important.
 
 
 
-#### Breadth First 
+#### Breadth First, segmented 
 
 After a lot of testing with gcc and clang I then came to the conclusion that it is the backtracking itself that 
 is limiting the speed. There is just too much jumping up and down the rows. So I tried a BFS (breadth first search)
@@ -77,7 +76,6 @@ are needed, which in my case is also the number of threads. The edge queens have
 have to wait idle. 
 
 This is the output for N=16 with 4 threads:
-
 
 ```
 
@@ -103,9 +101,10 @@ enough thread loads...
 
 The `perf stat` characteristics of `bits_bfs_segm_omp.c` (vs. recursive) are:
 
-- many page faults (but also cache hits) vs. 0 
+- many page faults (but also cache hits) vs. practically none 
 - 2.0 instructions/cycle                 vs. 1.2   
 - 9% branch misses                       vs. 23%   
+
 
 
 
