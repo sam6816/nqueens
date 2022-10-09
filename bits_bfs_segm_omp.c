@@ -15,7 +15,7 @@ struct nqstate {
 
 /* Write zero to N elems into 't' from elem 'i' from 's' */
 int
-gen_single(struct nqstate * s, int i, struct nqstate * t, int j) {
+gen_single(struct nqstate *s, int i, struct nqstate *t, int j) {
 
     int cand = s[i].mid & ~(s[i].le | s[i].ri),
         queen;
@@ -121,7 +121,7 @@ sum_wbloc(struct wbloc *wblocs) {
         if (nrows && sz) {
             int chdiv =  sz * multip * multip / LIM;
             wblocs[++sp] = (struct wbloc) {.nqptr=s, .sz=sz, .nrows=nrows, .multip=multip, .chdiv=chdiv, .f=1};
-            //printf("[%d] WBLOC added at sp %d nr %2d split: %8d/%d m %2.1f %p\n", omp_get_thread_num(), sp, nrows, sz, chdiv, multip, s);
+            //printf("[%d] WBLOC added at sp %d nr %2d split: %6d/%2d m %2.1f %p\n", omp_get_thread_num(), sp, nrows, sz, chdiv, multip, s);
             continue;
         }
         //printf("[%d] SUM at %d sum: %ld m %f\n", omp_get_thread_num(), sp, sum, multip);
