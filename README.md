@@ -117,6 +117,7 @@ The `perf stat` characteristics of `bits_bfs_segm_omp.c` (vs. recursive) are:
 - 9% branch misses                       vs. 23%   
 
 
+#### bits_bfs_segm_omp.c details
 
 There are some info lines to uncomment to show the progress; these are the
 first lines with N16 and 4 threads:
@@ -153,8 +154,11 @@ perfect, but it does not matter too much whether you restart with 200 elements
 or 5000. But the simple way of looping through a big block and restarting all
 as a 1-element-arrays is suboptimal.  
 
+
+##### Partial runs
+
 There is a second parameter, `nruns`, which defaults to `N - 2` (one row is
-pre-generated, the last one is not needed). Here is the output for 1. to 4.
+pre-generated, the last one is not needed). Here is the output for the 1. to 4.
 row; single threaded for correct ordering: 
 
 
@@ -189,15 +193,15 @@ N16 --> 19688
 [0]  1.  fffd     4     1 -->     9895
 [0]  2.  fffb     8     2 -->     9331
 [0]  3.  fff7    10     4 -->     8757
-[0]  4.  ffef    20     8 -->     8123
+[0]  4.  ffef    20     8 -->     8123   <- min.
 [0]  5.  ffdf    40    10 -->     8151
 [0]  6.  ffbf    80    20 -->     8171
 [0]  7.  ff7f   100    40 -->     8232
 N16 --> 141812
 
 
-This shows that the side queen(s) actually first take the lead: it pays off to let 
-*one* of the diagonal threats run off the board immediately.
+This shows that the side queen(s) actually first take the lead: it pays off to
+let *one* of the diagonal threats run off the board immediately.
 
 Here after 9, 10 and 11 rows:
 
@@ -230,16 +234,19 @@ N16 --> 159712894
 N16 --> 181822126
 
 
-Suddenly there is a clear distribution favoring the center queens: now it pays off to 
-have *both* diagonals run off the board.
+Suddenly there is a clear distribution favoring the center queens: now it pays
+off to have *both* diagonals run off the board.
 
-From here the solutions get to be reduced by ~12 over the remaining 5 rows. See final result for N16 above: 14.7 Mio.
+From here the 181.8 Mio solutions get to be reduced by ~12 over the remaining 5
+rows. See final result for N16 above: 14.7 Mio.
 
 ### Conclusion
 
-The segmented breadth-first approach is an extra layer for a backtracking algorithm. It keeps 
-the generations in sync as long as possible, or desired. Instead of backtracking proper i.e. fetching a previous single state
-it works more by *extinction*: a dead branch simply leaves no trace in the next generation. 
+The segmented breadth-first approach is an extra layer for a backtracking
+algorithm. It keeps the generations in sync as long as possible, or desired.
+Instead of backtracking proper i.e. fetching a previous single state it works
+more by *extinction*: a dead branch simply leaves no trace in the next
+generation. 
 
 With backtracking, also by recursion, every single new solution must ask: "Or
 am I on the last row?". I believe the row-hopping also leads to all these
@@ -248,48 +255,5 @@ much on the row. __builtin_expect() takes only constants. Branch Predictor is
 efficient, but it works by statistics, not logic reasoning.  The recursive
 version is only super fast with gcc doing very long **constprop**-inlining.  
 
-With only slow RAM and fast CPU registers, individual backtracking would be
-optimal. But there are three levels of cache, and it is not difficult to find
-an efficient segmentation formula, at least in the N-Queens case. 
-
-In a way, "my" segmented BFS is still backtracking: it tries to reach the final
-result by advancing, but when it can't or when it gets inefficent, it
-*deposits* most of the nodes and only advances a segment. "Lesstracking" it can
-be called.
-
-It seems to me this could also serve as a basis for a chess playing program,
-where for similar reasons you want to go not only deep, but also broad. Or
-actually for any kind of tree structure, when you want control over how deep to
-go with which branches.  
-
-And of course the similarities with the *prime sieve* are obvious: a prime sieve
-is very fast, but only up to a certain size; it has an upper limit.  With a
-segmented prime sieve, you have no upper limit, and you can optimize the
-segment to the cache size. 
 
 
-### Idea: SIMD
-
-It is tempting to do all these bit operations with 8 (or 16) integers at a
-time.  One problem is some nodes have 1, some have several candidates to loop
-through.  The other: when a node goes extinct (zero candidates), it has to be
-eliminated from the vector, or the array.  So maybe one could use the final
-test to store the nodes *by bitcount of their candidates*.
-
-The "final test" / look-ahead: 
-
-        if (t[j].mid & ~(t[j].le | t[j].ri))  
-            j++;
-
-could generate a fourth "cand" vector, whose bitcount is used to store the nodes 
-into separate arrays - or not at all, in case of zero, as the conditional `j++`
-does above. The bulk of the candidates has only one bit, some have two, few
-have more (in the rows that matter, about 2/3 down the board). 
-
-So maybe it could work by making the "retire" from SIMD even more expensive, because then
-at least the input side can be kept in sync. Sadly it means 3 separate integer arrays 
-instead of a struct array, a detail but a profound one. 
-
-More realistic is to outsource some segments to the GPU - should be perfect for
-doing small operations on a large array with three fields, like on triangle
-data. 
