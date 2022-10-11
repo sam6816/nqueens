@@ -123,7 +123,6 @@ There are some info lines to uncomment to show the progress; these are the
 first lines with N16 and 4 threads:
 
 ```
-
 [3] WBLOC added at sp 0 nr  9 split:  53743/63 m 6.1 0x7fc16ac00010
 [1] WBLOC added at sp 0 nr  9 split:  56596/65 m 6.1 0x7fc16ad15010
 [0] WBLOC added at sp 0 nr  9 split:  60164/64 m 5.9 0x7fc16aaf9010
@@ -135,7 +134,6 @@ first lines with N16 and 4 threads:
 [0] WBLOC added at sp 1 nr  6 split:  47258/11 m 2.8 0x560f52d379b0
 [2] WBLOC added at sp 1 nr  6 split:  44677/ 9 m 2.6 0x7fc15c0620a0
 ...
-
 ```
 
 `sp` is the stack pointer i.e. level, `nr` is the number of rows (on the
@@ -161,7 +159,7 @@ There is a second parameter, `nruns`, which defaults to `N - 2` (one row is
 pre-generated, the last one is not needed). Here is the output for the 1. to 4.
 row; single threaded for correct ordering: 
 
-
+```
 [0]  0.  fffe     2     0 -->       14    <- side queen only takes away 2 fields, 14 of 16 are free
 [0]  1.  fffd     4     1 -->       13
 [0]  2.  fffb     8     2 -->       13
@@ -198,13 +196,14 @@ N16 --> 19688
 [0]  6.  ffbf    80    20 -->     8171
 [0]  7.  ff7f   100    40 -->     8232
 N16 --> 141812
-
+```
 
 This shows that the side queen(s) actually first take the lead: it pays off to
 let *one* of the diagonal threats run off the board immediately.
 
 Here after 9, 10 and 11 rows:
 
+```
 [0]  0.  fffe     2     0 -->  6010779
 [0]  1.  fffd     4     1 -->  6403798
 [0]  2.  fffb     8     2 -->  6588563     <<< max.
@@ -232,7 +231,7 @@ N16 --> 159712894
 [0]  6.  ffbf    80    20 --> 13044679
 [0]  7.  ff7f   100    40 --> 13188557    <<< abs. max. 
 N16 --> 181822126
-
+```
 
 Suddenly there is a clear distribution favoring the center queens: now it pays
 off to have *both* diagonals run off the board.
@@ -254,6 +253,3 @@ branch-misses (24% vs. 9%), because the probability for a queen depends very
 much on the row. __builtin_expect() takes only constants. Branch Predictor is
 efficient, but it works by statistics, not logic reasoning.  The recursive
 version is only super fast with gcc doing very long **constprop**-inlining.  
-
-
-
